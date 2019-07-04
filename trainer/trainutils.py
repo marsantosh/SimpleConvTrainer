@@ -34,8 +34,8 @@ def get_argv():
     )
     ap.add_argument(
         '-a', '--architecture', required = True, type = str,
-        help = 'the architecture of the cnn to be trained. Options: `lenet`,' \
-            '`minivgg`,`karpathynet`.'
+        help = 'the architecture of the CNN to be trained: `alexnet`, `lenet`, `minivgg`, ' \
+            + '`karpathynet` and `VGG16`'
     )
     ap.add_argument(
         '-d', '--dataset', required = True, type = str,
