@@ -9,6 +9,14 @@ __pycache__/
 # mac related files
 .DS_Store
 
+# output files
+output/models/*
+output/plots/*
+output/reports/*
+
+# datasets
+datasets/*
+
 # Distribution / packaging
 .Python
 build/

@@ -6,3 +6,4 @@ from .fcheadnet import FCHeadNet
 from .alexnet import AlexNet
 from .resnet import ResNet
 from .karpathynet import KarpathyNet
+from .vgg16 import VGG16

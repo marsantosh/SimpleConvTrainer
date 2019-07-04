@@ -18,7 +18,7 @@ do
     python3 trainer/main.py \
         --architecture lenet \
         --dataset datasets/NCWV2 \
-        --model NCWV2_minivgg_ch3_it150_aug_${number}.h5 \
+        --model-name NCWV2_minivgg_ch3_it150_aug_${number}.h5 \
         --epochs 150 \
         --etha ${etha} \
         --optimizer adam

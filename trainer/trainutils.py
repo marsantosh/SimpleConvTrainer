@@ -4,7 +4,20 @@
 import argparse
 import datetime
 
+description = '''
+Convolutional Neural Network trainer for a specific architecture using
+TensorFlow as the backend engine and OpenCV for vision utilities.
+                                        -msantosh@axtellabs.
+The supported architectures are:
+    - MiniVGG
+    - LeNet
+    - AlexNet
+    - KarpathyNet
+    - VGG16 (fixed size input {224, 224, 3} and 1000 classes.)
 
+All architectures (until now) can be specified their input shapes
+and their output dimension (number of classes), except for the VGG16.
+'''
 
 def get_argv():
     '''
@@ -16,57 +29,50 @@ def get_argv():
             as attributes.
     '''
     ap = argparse.ArgumentParser(
-        prog = 'python(3.6) trainer/main.py', description = '''
-        Convolutional Neural Network trainer for a specific architecture using
-        TensorFlow as the backend engine and OpenCV for vision utilities.
-            -msantosh@axtellabs
-        '''
+        prog = 'python(3.6) trainer/main.py', formatter_class = argparse.RawDescriptionHelpFormatter,
+        description = description
     )
     ap.add_argument(
         '-a', '--architecture', required = True, type = str,
-        help = 'the architecture of the cnn to be trained. Options: `lenet`, \
-            `minivgg`, `karpathynet`.'
+        help = 'the architecture of the cnn to be trained. Options: `lenet`,' \
+            '`minivgg`,`karpathynet`.'
     )
     ap.add_argument(
         '-d', '--dataset', required = True, type = str,
-        help = 'path to input dataset'
+        help = 'path to input dataset.'
     )
     ap.add_argument(
-        '-m', '--model', required = True, type = str,
-        help = 'name [syntax] of output model file'
+        '-n', '--normalize', default = True, type = bool,
+        help = 'normalize the input images intensities or not (default is True).'
+    )
+    ap.add_argument(
+        '-mn', '--model-name', required = True, type = str,
+        help = 'name [syntax] of output model file.'
     )
     ap.add_argument(
         '-g', '--grayscale', default = False, type = bool,
-        help = 'load images in grayscale or not (default is False)'
+        help = 'load images in grayscale or not (default is False).'
     )
     ap.add_argument(
         '-i', '--image-size', default = 64, type = int,
-        help = 'the size of the images in pixels for the width and height'
+        help = 'the size of the images in pixels (width and height) for the input tensor.'
     )
     ap.add_argument(
         '-o', '--optimizer', default = 'SGD', type = str,
         help = 'the optimizer to use for the gradient descent variant step \
-        for optimization. Supported optimizers: `adam` and `sgd`'
-    )
-    ap.add_argument(
-        '-decay', '--lr-decay', default = False, type = bool,
-        help = 'lapply time based learning rate < decay_rate = learning_rate / epochs >'
+        for optimization. Supported optimizers: `adam` and `sgd`.'
     )
     ap.add_argument(
         '-etha', '--etha', default = 0.001, type = float,
-        help = 'alpha (or etha) the learning rate for optmizer during the gradient descent step'
+        help = 'the learning rate for optmizer during the gradient descent step.'
     )
     ap.add_argument(
         '-e', '--epochs', default = 30, type = int,
-        help = 'number of epochs to train the network'
+        help = 'number of epochs to train the network.'
     )
     ap.add_argument(
         '-b', '--batch-size', default = 32, type = int,
-        help = 'the size of the batch to train with stochastic gradient descent'
-    )
-    ap.add_argument(
-        '-do', '--dropout', default = False, type = bool,
-        help = 'whether or not apply dropout to the `KarpathyNet` architecture after the MaxPooling layers.'
+        help = 'the size of the batch to train with stochastic gradient descent.'
     )
 
     argv = ap.parse_args()
@@ -107,7 +113,7 @@ def build_architecture(argv, width:int, height:int, depth:int, classes:int):
         height = height,
         depth = depth,
         classes = classes,
-        dropout = argv.dropout
+        dropout = True
         )
     
     elif argv.architecture == 'minivgg':
@@ -119,11 +125,15 @@ def build_architecture(argv, width:int, height:int, depth:int, classes:int):
         classes = classes
         )
     
+    elif argv.architecture == 'vgg16':
+        from visutils.neuralnets.conv import VGG16
+        model = VGG16.build()
+    
     return model
 
 
 
-def load_images_and_labels(argv, imagepaths):
+def load_images_and_labels(argv, imagepaths, normalize = True):
     '''
     '''
     from visutils.preprocessing import ImageToArrayPreprocessor
@@ -143,8 +153,10 @@ def load_images_and_labels(argv, imagepaths):
     (data, labels) = sdl.load(
         imagepaths, verbose = 500
     )
-    print('[INFO] normalizing data...')
-    data = data.astype('float') / 255.0
+
+    if normalize:
+        print('[INFO] normalizing data...')
+        data = data.astype('float') / 255.0
 
     return data, labels
 
@@ -154,8 +166,8 @@ def write_training_report(argv, modelparams, report):
     '''
     '''
     imagesize = modelparams['imagesize']
-    with open(f'output/reports/{argv.model}_report.txt', 'w') as f:
-        f.write(f"REPORT FOR MODEL: {argv.model}\n\n")
+    with open(f'output/reports/{argv.model_name}_report.txt', 'w') as f:
+        f.write(f"REPORT FOR MODEL: {argv.model_name}\n\n")
         f.write(f"DATETIME: {datetime.datetime.now()}\n\n")
         
         f.write("             ========   PROGRAM ARGUMENTS   ========\n\n")

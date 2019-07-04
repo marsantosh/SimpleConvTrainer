@@ -48,14 +48,15 @@ def main(argv):
     classnames = [str(name) for name in np.unique(classnames)]
 
     # load the images and their respective labels
-    data, labels = load_images_and_labels(argv, imagepaths)
+    data, labels = load_images_and_labels(
+        argv, imagepaths, normalize = argv.normalize
+    )
 
     # partition dataset into training and testing
     (trainX, testX, trainY, testY) = train_test_split(
         data, labels, test_size = 0.10, random_state = 42
     )
 
-    print(trainX.shape)
     # reshaping data
     if argv.grayscale:
         imagesize = argv.image_size
@@ -97,8 +98,8 @@ def main(argv):
         optimizer = SGD(lr = argv.etha)
     
     # setting callbacks
-    modelpath = f'output/models/{argv.model}.h5'
-    plotpath = f'output/plots/{argv.model}.png'
+    modelpath = f'output/models/{argv.model_name}.h5'
+    plotpath = f'output/plots/{argv.model_name}.png'
     callbacks = [
         ModelCheckpoint(
             filepath = modelpath,
@@ -162,7 +163,7 @@ def main(argv):
 
     # write model report
     # the report will be written in the path:
-    # output/reports/{model_name}_repor.txt
+    # output/reports/{model_name}_report.txt
     print("[INFO] writing training report...")
     modelparams = {
         'imagesize': argv.image_size,
