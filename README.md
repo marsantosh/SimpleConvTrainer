@@ -64,7 +64,8 @@ optional arguments:
   -h, --help            show this help message and exit
   -a ARCHITECTURE, --architecture ARCHITECTURE
                         the architecture of the CNN to be trained: `alexnet`,
-                        `lenet`, `minivgg`, `karpathynet` and `VGG16`
+                        `lenet`, `minivgg`, `karpathynet`, `ResNet50` and
+                        `VGG16`.
   -d DATASET, --dataset DATASET
                         path to input dataset.
   -n NORMALIZE, --normalize NORMALIZE
