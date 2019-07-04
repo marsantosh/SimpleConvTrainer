@@ -74,18 +74,33 @@ class TrainingPlot(BaseLogger):
         # plotting (epoch starts at zero)
         if len(self.H["loss"]) > 1:
             # plot the training loss and accuracy
-            N = np.arange(0, len(self.H["loss"]))
-            plt.style.use("ggplot")
-            plt.figure()
-            plt.plot(N, self.H["loss"], label = "train_loss")
-            plt.plot(N, self.H["val_loss"], label = "val_loss")
-            plt.plot(N, self.H["acc"], label = "train_acc")
-            plt.plot(N, self.H["val_acc"], label = "val_acc")
-            plt.title("Training Loss and Accuracy [Epoch {}]".format(len(self.H["loss"])))
-            plt.xlabel("Epoch #")
-            plt.ylabel("Loss / Accuracy")
-            plt.legend()
+
+            plt.style.use('seaborn-poster')
+            # plot training loss and accuracy
+            N = np.arange(0, len(self.H['loss']))
+            figure, axes = plt.subplots(1, 2, figsize = (22, 10))
+            axes = axes.flatten()
+
+            # first box: loss
+            axes[0].grid()
+            axes[0].set_title('Training Loss Monitor')
+            axes[0].set_ylabel('Loss')
+            axes[0].set_xlabel('Epoch')
+            axes[0].set_ylim(ymin = 0)
+            axes[0].plot(N, self.H["loss"], '-', label = 'training loss')
+            axes[0].plot(N, self.H["val_loss"], '-', label = 'validation loss')
+            axes[0].legend()
+
+            # second box ACCURACY
+            axes[1].grid()
+            axes[1].set_title('Training Accuracy Monitor')
+            axes[1].set_ylabel('Accuracy')
+            axes[1].set_xlabel('Epoch')
+            axes[1].set_ylim([0, 1])
+            axes[1].plot(N, self.H["acc"], '-', label = 'training accuracy')
+            axes[1].plot(N, self.H["val_acc"], '-', label = 'validation accuracy')
+            axes[1].legend()
 
             # save figure
-            plt.savefig(self.figPath, dpi = 250)
+            figure.savefig(self.figPath, bbox_inches='tight', dpi = 200)
             plt.close()

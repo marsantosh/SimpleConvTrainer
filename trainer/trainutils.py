@@ -139,6 +139,15 @@ def build_architecture(argv, width:int, height:int, depth:int, classes:int):
         from visutils.neuralnets.conv import VGG16
         model = VGG16.build()
     
+    elif argv.architecture == 'resnet50':
+        from visutils.neuralnets.conv import ResNet50
+        model = ResNet50.build(
+            width = width,
+            height = height,
+            depth = depth,
+            classes = classes
+        )
+    
     return model
 
 

@@ -8,8 +8,13 @@ Available CNN architectures:
 - minivgg
 - karpathynet
 - alexnet
+- ResNet50
 - vgg16 (fixed size)
 ```
+
+You can change the network architecture class in:
+```visutils/neuralnets/conv/{architecture}.py``` file to better suit the project needs.
+
 
 ## Requirements
 
@@ -96,3 +101,25 @@ compatible CNN model.
 report and the test validation information.
 + A {.png} file in ```output/plot/{filename}``` which represents the training plot
 metrics monitor over the training phase.
+
+
+## Program structure
+```
+├── env.sh
+├── run_training_loop.sh
+├── run_training_single.sh
+├── datasets
+├── output
+│   ├── models
+│   ├── plots
+│   └── reports
+├── trainer
+│   └── main.py
+│   └── trainutils.py
+└── visutils
+    ├── callbacks
+    ├── datasets
+    ├── neuralnets
+    │   └── conv
+    └── preprocessing
+```

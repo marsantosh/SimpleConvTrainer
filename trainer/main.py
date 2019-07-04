@@ -12,7 +12,7 @@ def main(argv):
     # print program arguments
     print('[INFO] program arguments: ')
     for arg, val in argv._get_kwargs():
-        print(f'  {arg + ":":12}    {val}')
+        print(f'  {arg + ":":14}    {val}')
     
     print('[INFO] setting up program...')
     print('[INFO] importing libraries...')

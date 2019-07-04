@@ -13,9 +13,10 @@
 #
 # {datasetname}_{archname}_ch{num_channs:1}_it{num_epochs:3}_aug_{operation}.h5
 python3 trainer/main.py \
-    --architecture alexnet \
+    --architecture lenet \
     --dataset datasets/NCWV2 \
-    --model-name NCWV2_lenet_ch3_it002_aug_01 \
-    --epochs 2 \
+    --model-name NCWV2_lenet_ch3_it150_aug_bs128_01 \
+    --epochs 150 \
     --etha 0.0001 \
     --optimizer adam \
+    --batch-size 128

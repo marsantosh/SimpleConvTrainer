@@ -14,6 +14,9 @@ output/models/*
 output/plots/*
 output/reports/*
 
+# experimenting stuff
+experiments/*
+
 # datasets
 datasets/*
 
