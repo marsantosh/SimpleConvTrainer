@@ -7,6 +7,8 @@ Available CNN architectures:
 - lenet
 - minivgg
 - karpathynet
+- alexnet
+- vgg16 (fixed size)
 ```
 
 ## Requirements

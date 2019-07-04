@@ -100,29 +100,39 @@ def build_architecture(argv, width:int, height:int, depth:int, classes:int):
     if argv.architecture == 'lenet':
         from visutils.neuralnets.conv import LeNet
         model = LeNet.build(
-        width = width,
-        height = height,
-        depth = depth,
-        classes = classes
+            width = width,
+            height = height,
+            depth = depth,
+            classes = classes
         )
     
     elif argv.architecture == 'karpathynet':
         from visutils.neuralnets.conv import KarpathyNet
         model = KarpathyNet.build(
-        width = width,
-        height = height,
-        depth = depth,
-        classes = classes,
-        dropout = True
+            width = width,
+            height = height,
+            depth = depth,
+            classes = classes,
+            dropout = True
         )
     
     elif argv.architecture == 'minivgg':
         from visutils.neuralnets.conv import MiniVGGNet
         model = MiniVGGNet.build(
-        width = width,
-        height = height,
-        depth = depth,
-        classes = classes
+            width = width,
+            height = height,
+            depth = depth,
+            classes = classes
+        )
+    
+    elif argv.architecture == 'alexnet':
+        from visutils.neuralnets.conv import AlexNet
+        model = AlexNet.build(
+            width = width,
+            height = height,
+            depth = depth,
+            classes = classes,
+            reg = 0.0002
         )
     
     elif argv.architecture == 'vgg16':

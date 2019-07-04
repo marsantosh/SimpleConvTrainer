@@ -13,7 +13,7 @@
 #
 # {datasetname}_{archname}_ch{num_channs:1}_it{num_epochs:3}_aug_{operation}.h5
 python3 trainer/main.py \
-    --architecture lenet \
+    --architecture alexnet \
     --dataset datasets/NCWV2 \
     --model-name NCWV2_lenet_ch3_it002_aug_01 \
     --epochs 2 \
