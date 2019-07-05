@@ -28,6 +28,19 @@ def get_argv():
         argv: an object (Namespace) with the parsed arguments
             as attributes.
     '''
+    
+    
+    def string2bool(value):
+        if isinstance(value, bool):
+            return value
+        if value.lower() in ('yes', 'true', 't', 'y', '1'):
+            return True
+        elif value.lower() in ('no', 'false', 'f', 'n', '0'):
+            return False
+        else:
+            raise argparse.ArgumentTypeError('Boolean value expected.')
+
+
     ap = argparse.ArgumentParser(
         prog = 'python(3.6) trainer/main.py', formatter_class = argparse.RawDescriptionHelpFormatter,
         description = description
@@ -35,14 +48,14 @@ def get_argv():
     ap.add_argument(
         '-a', '--architecture', required = True, type = str,
         help = 'the architecture of the CNN to be trained: `alexnet`, `lenet`, `minivgg`, ' \
-            + '`karpathynet`, `ResNet50` and `VGG16`'
+            + '`karpathynet`, `resnet50` and `vgg16`'
     )
     ap.add_argument(
         '-d', '--dataset', required = True, type = str,
         help = 'path to input dataset.'
     )
     ap.add_argument(
-        '-n', '--normalize', default = True, type = bool,
+        '-n', '--normalize', default = True, type = string2bool,
         help = 'normalize the input images intensities or not (default is True).'
     )
     ap.add_argument(
@@ -50,7 +63,7 @@ def get_argv():
         help = 'name [syntax] of output model file.'
     )
     ap.add_argument(
-        '-g', '--grayscale', default = False, type = bool,
+        '-g', '--grayscale', default = False, type = string2bool,
         help = 'load images in grayscale or not (default is False).'
     )
     ap.add_argument(
@@ -67,14 +80,27 @@ def get_argv():
         help = 'the learning rate for optmizer during the gradient descent step.'
     )
     ap.add_argument(
+        '-r', '--reduce-lr', default = False, type = string2bool,
+        help = 'reduce the learning rate on validation loss plateau. `factor` = 0.2, \
+        check Callbacks if you want to modify it.'
+    )
+    ap.add_argument(
         '-e', '--epochs', default = 30, type = int,
         help = 'number of epochs to train the network.'
+    )
+    ap.add_argument(
+        '-es', '--early-stop', default = 0, type = int,
+        help = 'Use early stopping callback while training (default is 0). The integer' \
+            + 'indicates the patience.'
     )
     ap.add_argument(
         '-b', '--batch-size', default = 32, type = int,
         help = 'the size of the batch to train with stochastic gradient descent.'
     )
-
+    ap.add_argument(
+        '-tb', '--tensorboard', default = False, type = string2bool,
+        help = 'enable weight histogram monitoring with tensorboard visualizer'
+    )
     argv = ap.parse_args()
 
     return argv
@@ -150,6 +176,61 @@ def build_architecture(argv, width:int, height:int, depth:int, classes:int):
     
     return model
 
+
+
+def build_callbacks(argv):
+    '''
+    '''
+    from keras.callbacks import ModelCheckpoint
+    from keras.callbacks import ReduceLROnPlateau
+    from keras.callbacks import TensorBoard
+    from keras.callbacks import EarlyStopping
+    from visutils.callbacks import TrainingPlot
+    from visutils.callbacks import  EpochCheckpoint
+
+    modelpath = f'output/models/{argv.model_name}.h5'
+    plotpath = f'output/plots/{argv.model_name}.png'
+    callbacks = [
+        ModelCheckpoint(
+            filepath = modelpath,
+            save_best_only = True,
+            verbose = True
+        ),
+        TrainingPlot(
+            figPath = plotpath
+        )
+    ]
+
+    if argv.reduce_lr:
+        callbacks.append(
+            ReduceLROnPlateau(
+                monitor = 'val_loss',
+                factor = 0.2,
+                patience = 10,
+                cooldown = 3,
+                verbose = True
+            )
+        )
+    
+    if argv.tensorboard:
+        callbacks.append(
+            TensorBoard(
+                log_dir = './logs',
+                histogram_freq = 5,
+                verbose = True
+            )
+        )
+    
+    if argv.early_stop:
+        callbacks.append(
+            EarlyStopping(
+                monitor = 'val_loss',
+                patience = argv.early_stop,
+                verbose = True
+            )
+        )
+
+    return callbacks
 
 
 def load_images_and_labels(argv, imagepaths, normalize = True):

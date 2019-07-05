@@ -17,6 +17,9 @@ output/reports/*
 # experimenting stuff
 experiments/*
 
+# my training bash files
+scripts/*
+
 # datasets
 datasets/*
 

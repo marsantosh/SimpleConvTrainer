@@ -5,6 +5,7 @@ from trainutils import get_argv
 from trainutils import write_training_report
 from trainutils import load_images_and_labels
 from trainutils import build_architecture
+from trainutils import build_callbacks
 
 def main(argv):
     '''
@@ -35,9 +36,7 @@ def main(argv):
     from keras.preprocessing.image import ImageDataGenerator
     from keras.optimizers import Adam, SGD
     from keras.utils import to_categorical
-    from keras.callbacks import ModelCheckpoint
     from imutils import paths
-    from visutils.callbacks import TrainingPlot, EpochCheckpoint
 
     # extracting the class labels from image paths
     print('[INFO] extracting class names...')
@@ -87,30 +86,12 @@ def main(argv):
         fill_mode = 'nearest'
     )
 
-    # initialize the optimizer and model
+    # building model
     # the neural net architecture input size will have
     # magnitudes of width and height and channel dimension,
     # according to the input image.
-    print('[INFO] compiling model...')
-    if argv.optimizer == 'adam':
-        optimizer = Adam(lr = argv.etha)
-    else:
-        optimizer = SGD(lr = argv.etha)
-    
-    # setting callbacks
-    modelpath = f'output/models/{argv.model_name}.h5'
-    plotpath = f'output/plots/{argv.model_name}.png'
-    callbacks = [
-        ModelCheckpoint(
-            filepath = modelpath,
-            save_best_only = True
-        ),
-        TrainingPlot(
-            figPath = plotpath
-        )
-    ]
+    print('[INFO] building model...')
 
-    # building model
     # getting width, height and depth of images
     __, width, height, depth = testX.shape
     model = build_architecture(
@@ -122,6 +103,13 @@ def main(argv):
     )
 
     # compiling model
+    print('[INFO] compiling model...')
+
+    if argv.optimizer == 'adam':
+        optimizer = Adam(lr = argv.etha)
+    else:
+        optimizer = SGD(lr = argv.etha)
+    
     loss_function = 'categorical_crossentropy'
     metrics = ['accuracy']
     model.compile(
@@ -136,6 +124,9 @@ def main(argv):
     )
 
     # fitting model
+    # setting callbacks
+    callbacks = build_callbacks(argv)
+
     t = time.time()
     print('[INFO] training network:')
     print('[INFO] launching TensorFlow engine:')
