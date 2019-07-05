@@ -168,14 +168,22 @@ to monitor the training scalar metrics.
 ## Program structure
 ```
 ├── env.sh
-├── run_training_loop.sh
-├── run_training_single.sh
 ├── datasets
+│   └── {datasetname}
+│       └── class1
+│            └── image000.png
+│            └── image001.png
+│            └── image002.png
+│            └── ...
+│       └── class2
+│       └── ...
+│       └── classn
+├── logs
 ├── output
 │   ├── models
 │   ├── plots
 │   └── reports
-├── trainer
+├── simpleconv
 │   └── main.py
 │   └── trainutils.py
 └── visutils
@@ -185,3 +193,10 @@ to monitor the training scalar metrics.
     │   └── conv
     └── preprocessing
 ```
+
+
+#
+## Comments:
+Until now I have to fix the creation of the log directory if it doens't exist
+for the tensorboard option, that callback produces a log file to be read by tensorboard
+in the path ```./logs/```.
