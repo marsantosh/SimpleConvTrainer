@@ -147,6 +147,14 @@ do
 done
 ```
 
+Testing a model:
+To test the performance of the model run modeltester with propriate arg values.
+```
+python3 tests/modeltester.py \
+    --dataset datasets/{testset} \
+    --model output/models/{modelpath} \
+    --image-size {imagesize}
+```
 #
 
 ## OUTPUTS
